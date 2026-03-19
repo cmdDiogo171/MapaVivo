@@ -1,0 +1,943 @@
+/* ── RESET ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── UTILITÁRIO ── */
+.oculto { display: none !important; }
+
+/* ── VARIÁVEIS ── */
+:root {
+  --norte:        #2D9E6B;
+  --nordeste:     #E8742A;
+  --centro-oeste: #D4A017;
+  --sudeste:      #3A7BD5;
+  --sul:          #7B5EA7;
+  --bg:           #F5F6FA;
+  --surface:      #FFFFFF;
+  --text:         #1C1C2E;
+  --text-soft:    #6B7280;
+  --radius:       16px;
+  --shadow:       0 4px 24px rgba(0,0,0,0.10);
+  --regiao-cor:   #3A7BD5;
+}
+
+/* ── BASE ── */
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* ── HEADER ── */
+header {
+  background: #1B3A2D;
+  padding: 12px 24px;
+  position: sticky;
+  top: 0;
+  z-index: 900;
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 1.4rem;
+  color: #fff;
+}
+
+.logo svg {
+  width: 24px;
+  height: 24px;
+  stroke: #4ADE80;
+}
+
+header p {
+  font-size: 0.85rem;
+  color: #a3b8a8;
+  flex: 1;
+}
+
+.header-btns {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+#btn-jogar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #4ADE80;
+  color: #1B3A2D;
+  border: none;
+  border-radius: 999px;
+  padding: 8px 18px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+}
+
+#btn-jogar:hover  { opacity: 0.88; }
+#btn-jogar:active { transform: scale(0.97); }
+
+#btn-jogar svg {
+  width: 16px;
+  height: 16px;
+  stroke: #1B3A2D;
+}
+
+/* ── MAPA ── */
+#map {
+  height: calc(100vh - 56px);
+  width: 100%;
+}
+
+/* ── PAINEL LATERAL ── */
+.painel {
+  position: fixed;
+  top: 56px;
+  right: 0;
+  width: 320px;
+  height: calc(100vh - 56px);
+  background: var(--surface);
+  border-left: 4px solid var(--regiao-cor);
+  padding: 24px 18px 32px;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: var(--shadow);
+  transition: transform 0.35s cubic-bezier(.4,0,.2,1),
+              border-color 0.3s ease;
+}
+
+.painel.oculto { transform: translateX(100%) !important; }
+
+#fechar-painel {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: var(--bg);
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+#fechar-painel:hover { background: #e5e7eb; }
+
+#fechar-painel svg {
+  width: 16px;
+  height: 16px;
+  stroke: var(--text-soft);
+}
+
+/* ── BANDEIRA ── */
+#bandeira-container {
+  text-align: center;
+  margin: 8px 0 12px;
+}
+
+#bandeira {
+  width: 110px !important;
+  height: 70px !important;
+  object-fit: contain !important;
+  border-radius: 8px !important;
+  background: #ffffff !important;
+  display: block !important;
+  margin: auto !important;
+  border: 1.5px solid rgba(0,0,0,0.12) !important;
+  box-shadow:
+    0 2px 8px rgba(0,0,0,0.14),
+    inset 0 0 0 1px rgba(0,0,0,0.06) !important;
+}
+
+/* ── NOME E REGIÃO ── */
+#estado-nome {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 1.5rem;
+  text-align: center;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.regiao-tag {
+  text-align: center;
+  margin-bottom: 14px;
+}
+
+.regiao-tag span {
+  display: inline-block;
+  padding: 3px 12px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #fff;
+  background: var(--regiao-cor);
+  font-family: 'Nunito', sans-serif;
+}
+
+/* ── ABAS ── */
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+  background: var(--bg);
+  border-radius: 12px;
+  padding: 4px;
+}
+
+.tab-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 8px 4px;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--text-soft);
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.72rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+
+.tab-btn svg {
+  width: 13px;
+  height: 13px;
+  stroke: currentColor;
+  flex-shrink: 0;
+}
+
+.tab-btn:hover  { background: #e5e7eb; color: var(--text); }
+.tab-btn.active {
+  background: var(--surface);
+  color: var(--regiao-cor);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+}
+
+/* ── CONTEÚDO DAS ABAS ── */
+.tab-content        { display: none; }
+.tab-content.active { display: block; }
+
+/* ── LISTA DE INFO ── */
+.info-lista {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.info-lista li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--bg);
+  border-radius: 10px;
+}
+
+.info-lista svg {
+  width: 16px;
+  height: 16px;
+  stroke: var(--regiao-cor);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.info-lista .label {
+  font-size: 0.75rem;
+  color: var(--text-soft);
+  display: block;
+  line-height: 1.2;
+}
+
+.info-lista strong {
+  font-size: 0.88rem;
+  color: var(--text);
+  display: block;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+/* ── CARDS CURIOSIDADE ── */
+.curiosidade-card {
+  background: var(--bg);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 12px;
+  border-left: 3px solid var(--regiao-cor);
+}
+
+.curiosidade-card.historica { border-left-color: #94a3b8; }
+
+.curiosidade-titulo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.78rem;
+  color: var(--text-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+
+.curiosidade-titulo svg { width: 13px; height: 13px; stroke: var(--regiao-cor); }
+.curiosidade-card.historica .curiosidade-titulo svg { stroke: #94a3b8; }
+.curiosidade-card p { font-size: 0.88rem; color: var(--text); line-height: 1.6; }
+
+/* ── VOCÊ SABIA ── */
+.voce-sabia-card {
+  background: linear-gradient(135deg, #1B3A2D 0%, #2D6A4F 100%);
+  border-radius: 16px;
+  padding: 24px 18px;
+  text-align: center;
+}
+
+.voce-sabia-icon  { font-size: 2rem; margin-bottom: 8px; }
+.voce-sabia-titulo {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 1rem;
+  color: #4ADE80;
+  margin-bottom: 12px;
+}
+.voce-sabia-card p { font-size: 0.9rem; color: #e2e8f0; line-height: 1.7; }
+
+/* ══════════════════════════════════════════════ */
+/* ── OVERLAYS DO JOGO ── */
+/* ══════════════════════════════════════════════ */
+.game-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(15, 23, 42, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  backdrop-filter: blur(6px);
+}
+
+.fechar-overlay {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  background: rgba(255,255,255,0.1);
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #fff;
+  transition: background 0.2s;
+}
+
+.fechar-overlay:hover { background: rgba(255,255,255,0.2); }
+.fechar-overlay svg   { width: 18px; height: 18px; stroke: #fff; }
+
+/* ── MENU DE MODOS ── */
+.game-menu-inner {
+  background: #0f172a;
+  border-radius: 24px;
+  padding: 32px 24px;
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.game-menu-logo   { font-size: 2.5rem; text-align: center; margin-bottom: 8px; margin-top: 16px; }
+
+.game-menu-titulo {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 1.5rem;
+  color: #fff;
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.game-menu-sub {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.modos-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.modo-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 16px 12px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.2s, transform 0.15s, border-color 0.2s;
+  text-align: center;
+}
+
+.modo-card:hover {
+  background: rgba(74,222,128,0.1);
+  border-color: #4ADE80;
+  transform: translateY(-2px);
+}
+
+.modo-relampago {
+  grid-column: 1 / -1;
+  flex-direction: row;
+  justify-content: center;
+  gap: 12px;
+  background: rgba(234,179,8,0.08);
+  border-color: rgba(234,179,8,0.3);
+}
+
+.modo-relampago:hover {
+  background: rgba(234,179,8,0.18);
+  border-color: #eab308;
+}
+
+.modo-icon { font-size: 1.6rem; }
+.modo-nome {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 0.88rem;
+  color: #fff;
+}
+.modo-desc { font-size: 0.72rem; color: #94a3b8; line-height: 1.3; }
+
+/* ── TELA DO JOGO ── */
+.game-play-inner {
+  background: #0f172a;
+  border-radius: 24px;
+  padding: 20px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 92vh;
+  overflow-y: auto;
+  position: relative;
+  border: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.game-topbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.game-topbar .fechar-overlay {
+  position: static;
+  flex-shrink: 0;
+}
+
+.game-modo-label {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 0.9rem;
+  color: #4ADE80;
+  flex: 1;
+}
+
+.game-stats {
+  display: flex;
+  gap: 10px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #fff;
+}
+
+#game-timer { color: #eab308; }
+
+/* ── BARRA DE PROGRESSO ── */
+.game-progresso-bar {
+  height: 5px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.game-progresso-fill {
+  height: 100%;
+  background: #4ADE80;
+  border-radius: 999px;
+  width: 0%;
+  transition: width 0.4s ease;
+}
+
+/* ── PERGUNTA ── */
+.game-imagem-container { text-align: center; }
+
+.game-imagem-container img {
+  width: 160px;
+  height: 100px;
+  object-fit: contain;
+  border-radius: 10px;
+  border: 2px solid rgba(255,255,255,0.12);
+  background: #fff;
+}
+
+.game-pergunta-texto {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: #fff;
+  text-align: center;
+  line-height: 1.5;
+  white-space: pre-line;
+}
+
+/* ── OPÇÕES ── */
+.game-opcoes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.game-opcao {
+  background: rgba(255,255,255,0.06);
+  border: 2px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  padding: 14px 10px;
+  color: #fff;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s;
+  line-height: 1.3;
+}
+
+.game-opcao:hover:not(:disabled) {
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,0.3);
+  transform: scale(1.02);
+}
+
+.game-opcao.correta {
+  background: rgba(22,163,74,0.25) !important;
+  border-color: #16a34a !important;
+  color: #4ADE80 !important;
+}
+
+.game-opcao.errada {
+  background: rgba(220,38,38,0.2) !important;
+  border-color: #dc2626 !important;
+  color: #f87171 !important;
+}
+
+/* ── FEEDBACK ── */
+.game-feedback {
+  text-align: center;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.game-feedback.acerto {
+  background: rgba(22,163,74,0.2);
+  color: #4ADE80;
+}
+
+.game-feedback.erro {
+  background: rgba(220,38,38,0.15);
+  color: #f87171;
+}
+
+/* ── BOTÃO PRÓXIMA ── */
+.btn-proxima {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #3A7BD5;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 14px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  width: 100%;
+}
+
+.btn-proxima:hover { opacity: 0.88; }
+.btn-proxima svg   { width: 16px; height: 16px; stroke: #fff; }
+
+/* ── FIM DE JOGO ── */
+.game-over-inner {
+  background: #0f172a;
+  border-radius: 24px;
+  padding: 40px 28px;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  border: 1px solid rgba(255,255,255,0.08);
+  position: relative;
+}
+
+.game-over-emoji  { font-size: 3rem; margin-bottom: 8px; }
+
+.game-over-titulo {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 1.8rem;
+  color: #fff;
+  margin-bottom: 6px;
+}
+
+.game-over-sub    { font-size: 0.88rem; color: #94a3b8; margin-bottom: 24px; }
+
+.game-over-stats {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.game-over-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.game-over-num {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 2rem;
+  color: #4ADE80;
+}
+
+.game-over-label  { font-size: 0.75rem; color: #94a3b8; }
+
+.game-over-btns {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.game-over-btns button {
+  padding: 12px 20px;
+  border-radius: 12px;
+  border: none;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+#btn-jogar-novamente { background: #4ADE80; color: #0f172a; }
+#btn-trocar-modo     { background: rgba(255,255,255,0.1); color: #fff; }
+.game-over-btns button:hover { opacity: 0.85; }
+
+/* ── TOOLTIP LEAFLET ── */
+.leaflet-tooltip {
+  background: #1B3A2D;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.82rem;
+  padding: 5px 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.leaflet-interactive:focus { outline: none; }
+
+/* ── MOBILE ── */
+@media (max-width: 600px) {
+  .painel {
+    width: 100%;
+    top: auto;
+    bottom: 0;
+    height: 70vh;
+    border-left: none;
+    border-top: 4px solid var(--regiao-cor);
+  }
+
+  .painel.oculto { transform: translateY(100%) !important; }
+
+  header p       { display: none; }
+  .modos-grid    { grid-template-columns: 1fr; }
+  .game-opcoes   { grid-template-columns: 1fr; }
+}
+
+/* ══════════════════════════════════════════════ */
+/* ── BOTÃO CONQUISTAS (HEADER) ── */
+/* ══════════════════════════════════════════════ */
+#btn-conquistas {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 999px;
+  padding: 8px 18px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+}
+
+#btn-conquistas:hover  { opacity: 0.88; background: rgba(255,255,255,0.18); }
+#btn-conquistas:active { transform: scale(0.97); }
+#btn-conquistas svg    { width: 16px; height: 16px; stroke: #fff; }
+
+/* ══════════════════════════════════════════════ */
+/* ── NOTIFICAÇÃO DE CONQUISTA ── */
+/* ══════════════════════════════════════════════ */
+.notificacao {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  z-index: 3000;
+  transition: transform 0.4s cubic-bezier(.4,0,.2,1), opacity 0.4s;
+  opacity: 0;
+}
+
+.notificacao.visivel {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+.notif-inner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #1e293b;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 16px;
+  padding: 14px 20px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  min-width: 260px;
+}
+
+.notif-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.notif-titulo {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 2px;
+}
+
+.notif-nome {
+  font-size: 1rem;
+  color: #fff;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+}
+
+/* ══════════════════════════════════════════════ */
+/* ── OVERLAY: CONQUISTAS ── */
+/* ══════════════════════════════════════════════ */
+.conquistas-inner {
+  background: #0f172a;
+  border-radius: 24px;
+  padding: 28px 20px;
+  width: 100%;
+  max-width: 860px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.conquistas-header {
+  text-align: center;
+  margin-bottom: 24px;
+  margin-top: 12px;
+}
+
+.conquistas-logo  { font-size: 2.5rem; margin-bottom: 6px; }
+
+.conquistas-titulo {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 1.5rem;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.conquistas-sub {
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+/* ── BARRA DE PROGRESSO GERAL ── */
+.conquistas-progresso {
+  background: rgba(255,255,255,0.08);
+  border-radius: 999px;
+  height: 6px;
+  margin: 10px 0 24px;
+  overflow: hidden;
+}
+
+.conquistas-progresso-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4ADE80, #3A7BD5);
+  border-radius: 999px;
+  transition: width 0.5s ease;
+}
+
+/* ── SEÇÕES ── */
+.conquista-secao {
+  margin-bottom: 24px;
+}
+
+.conquista-secao-titulo {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 0.8rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+/* ── GRID DE MEDALHAS ── */
+.conquista-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.conquista-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 10px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+  transition: background 0.2s;
+  text-align: center;
+}
+
+.conquista-item.desbloqueada {
+  background: rgba(74,222,128,0.07);
+  border-color: rgba(74,222,128,0.2);
+}
+
+.conquista-item.desbloqueada:hover {
+  background: rgba(74,222,128,0.12);
+}
+
+.conquista-medalha {
+  font-size: 1.8rem;
+  filter: grayscale(1) opacity(0.3);
+}
+
+.conquista-item.desbloqueada .conquista-medalha {
+  filter: none;
+}
+
+.conquista-info { flex: 1; width: 100%; }
+
+.conquista-nome {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.78rem;
+  color: #fff;
+  display: block;
+  line-height: 1.3;
+  margin-bottom: 3px;
+}
+
+.conquista-item:not(.desbloqueada) .conquista-nome {
+  color: #4b5563;
+}
+
+.conquista-desc {
+  font-size: 0.68rem;
+  color: #6b7280;
+  display: block;
+  line-height: 1.3;
+}
+
+.conquista-item.desbloqueada .conquista-desc {
+  color: #94a3b8;
+}
+
+.conquista-nivel {
+  font-size: 0.65rem;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.nivel-bronze { background: rgba(180,83,9,0.3);   color: #f59e0b; }
+.nivel-prata  { background: rgba(100,116,139,0.3); color: #94a3b8; }
+.nivel-ouro   { background: rgba(234,179,8,0.3);   color: #eab308; }
+
+/* ── MOBILE ── */
+@media (max-width: 600px) {
+  .conquista-grid { grid-template-columns: repeat(2, 1fr); }
+  .conquistas-inner { border-radius: 16px; padding: 20px 14px; }
+  #btn-conquistas span { display: none; }
+}

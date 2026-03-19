@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MapaVivo – Conhecendo nosso Brasil</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <link rel="stylesheet" href="style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <!-- ── HEADER ── -->
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <i data-lucide="map"></i>
+        <span>MapaVivo</span>
+      </div>
+      <p>Clique em um estado e descubra o Brasil</p>
+      <div class="header-btns">
+        <button id="btn-jogar">
+          <i data-lucide="play-circle"></i> Jogar
+        </button>
+        <button id="btn-conquistas">
+          <i data-lucide="medal"></i> Conquistas
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div id="notificacao" class="notificacao oculto">
+  <div class="notif-inner">
+    <span class="notif-icon" id="notif-icon">🥉</span>
+    <div>
+      <div class="notif-titulo">Conquista desbloqueada!</div>
+      <div class="notif-nome" id="notif-nome">Vereador</div>
+    </div>
+  </div>
+</div>
+
+
+  <!-- ── MAPA ── -->
+  <div id="map"></div>
+
+  <!-- ── PAINEL LATERAL ── -->
+  <div id="painel" class="painel oculto">
+    <button id="fechar-painel" aria-label="Fechar">
+      <i data-lucide="x"></i>
+    </button>
+
+    <div id="bandeira-container">
+      <img id="bandeira" src="" width="110" height="70" style="border-radius:8px">
+    </div>
+    <h2 id="estado-nome"></h2>
+    <div id="regiao-tag" class="regiao-tag"></div>
+
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="dados">
+        <i data-lucide="bar-chart-2"></i> Dados
+      </button>
+      <button class="tab-btn" data-tab="cultura">
+        <i data-lucide="music"></i> Cultura
+      </button>
+      <button class="tab-btn" data-tab="sabia">
+        <i data-lucide="lightbulb"></i> Você Sabia?
+      </button>
+    </div>
+
+    <div id="tab-dados" class="tab-content active">
+      <ul class="info-lista">
+        <li><i data-lucide="landmark"></i><div><span class="label">Capital</span><strong id="val-capital"></strong></div></li>
+        <li><i data-lucide="users"></i><div><span class="label">População</span><strong id="val-populacao"></strong></div></li>
+        <li><i data-lucide="map-pin"></i><div><span class="label">Área</span><strong id="val-area"></strong></div></li>
+        <li><i data-lucide="trending-up"></i><div><span class="label">PIB</span><strong id="val-pib"></strong></div></li>
+        <li><i data-lucide="trees"></i><div><span class="label">Bioma</span><strong id="val-bioma"></strong></div></li>
+        <li><i data-lucide="cloud-sun"></i><div><span class="label">Clima</span><strong id="val-clima"></strong></div></li>
+        <li><i data-lucide="mountain"></i><div><span class="label">Relevo</span><strong id="val-relevo"></strong></div></li>
+        <li><i data-lucide="briefcase"></i><div><span class="label">Atividade Principal</span><strong id="val-atividade"></strong></div></li>
+      </ul>
+    </div>
+
+    <div id="tab-cultura" class="tab-content">
+      <ul class="info-lista">
+        <li><i data-lucide="utensils"></i><div><span class="label">Prato Típico</span><strong id="val-prato"></strong></div></li>
+        <li><i data-lucide="party-popper"></i><div><span class="label">Festa Tradicional</span><strong id="val-festa"></strong></div></li>
+      </ul>
+      <div class="curiosidade-card">
+        <div class="curiosidade-titulo"><i data-lucide="message-circle"></i> Curiosidade</div>
+        <p id="val-curiosidade"></p>
+      </div>
+      <div class="curiosidade-card historica">
+        <div class="curiosidade-titulo"><i data-lucide="scroll"></i> Histórica</div>
+        <p id="val-curiosidade-historica"></p>
+      </div>
+    </div>
+
+    <div id="tab-sabia" class="tab-content">
+      <div class="voce-sabia-card">
+        <div class="voce-sabia-icon">💡</div>
+        <div class="voce-sabia-titulo">Você Sabia?</div>
+        <p id="val-voce-sabia"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- ── OVERLAY: MENU DE MODOS ── -->
+  <!-- ══════════════════════════════════════════ -->
+  <div id="game-menu" class="game-overlay oculto">
+    <div class="game-menu-inner">
+      <button class="fechar-overlay" id="fechar-menu">
+        <i data-lucide="x"></i>
+      </button>
+      <div class="game-menu-logo">🗺️</div>
+      <h2 class="game-menu-titulo">Escolha um modo</h2>
+      <p class="game-menu-sub">Teste seus conhecimentos sobre o Brasil!</p>
+
+      <div class="modos-grid">
+        <button class="modo-card" data-modo="bandeiras">
+          <span class="modo-icon">🏳️</span>
+          <span class="modo-nome">Bandeiras</span>
+          <span class="modo-desc">Identifique a bandeira do estado</span>
+        </button>
+        <button class="modo-card" data-modo="capitais">
+          <span class="modo-icon">🏙️</span>
+          <span class="modo-nome">Capitais</span>
+          <span class="modo-desc">Qual a capital deste estado?</span>
+        </button>
+        <button class="modo-card" data-modo="pratos">
+          <span class="modo-icon">🍽️</span>
+          <span class="modo-nome">Pratos Típicos</span>
+          <span class="modo-desc">De qual estado é este prato?</span>
+        </button>
+        <button class="modo-card" data-modo="festas">
+          <span class="modo-icon">🎪</span>
+          <span class="modo-nome">Festas</span>
+          <span class="modo-desc">Onde acontece esta festa?</span>
+        </button>
+        <button class="modo-card" data-modo="geografia">
+          <span class="modo-icon">🌿</span>
+          <span class="modo-nome">Geografia</span>
+          <span class="modo-desc">Bioma, clima, relevo e mais</span>
+        </button>
+        <button class="modo-card" data-modo="curiosidades">
+          <span class="modo-icon">📖</span>
+          <span class="modo-nome">Curiosidades</span>
+          <span class="modo-desc">Fatos e história dos estados</span>
+        </button>
+        <button class="modo-card modo-relampago" data-modo="relampago">
+          <span class="modo-icon">⚡</span>
+          <span class="modo-nome">Relâmpago</span>
+          <span class="modo-desc">Tudo misturado — 60 segundos!</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- ── OVERLAY: JOGO ── -->
+  <!-- ══════════════════════════════════════════ -->
+  <div id="game-play" class="game-overlay oculto">
+    <div class="game-play-inner">
+
+      <!-- Topo do jogo -->
+      <div class="game-topbar">
+        <button class="fechar-overlay" id="fechar-jogo">
+          <i data-lucide="arrow-left"></i>
+        </button>
+        <div class="game-modo-label" id="game-modo-label">Bandeiras</div>
+        <div class="game-stats">
+          <span id="game-pontos">🏆 0</span>
+          <span id="game-sequencia">🔥 0</span>
+          <span id="game-timer" class="oculto">⏱️ 60</span>
+        </div>
+      </div>
+
+      <!-- Progresso -->
+      <div class="game-progresso-bar">
+        <div class="game-progresso-fill" id="game-progresso-fill"></div>
+      </div>
+
+      <!-- Área da pergunta -->
+      <div class="game-pergunta-area">
+        <div id="game-imagem-container" class="game-imagem-container oculto">
+          <img id="game-imagem" src="" alt=""/>
+        </div>
+        <p class="game-pergunta-texto" id="game-pergunta-texto"></p>
+      </div>
+
+      <!-- Opções -->
+      <div class="game-opcoes" id="game-opcoes"></div>
+
+      <!-- Feedback -->
+      <div id="game-feedback" class="game-feedback oculto"></div>
+
+      <!-- Próxima -->
+      <button id="btn-proxima" class="btn-proxima oculto">
+        Próxima <i data-lucide="arrow-right"></i>
+      </button>
+
+    </div>
+  </div>
+
+ <!-- ── FIM DE JOGO ── -->
+<div id="game-over" class="game-overlay oculto">
+  <div class="game-over-inner">
+
+    <button class="fechar-overlay" id="fechar-game-over">
+      <i data-lucide="x"></i>
+    </button>
+
+    <div class="game-over-emoji" id="game-over-emoji">🏆</div>
+    <h2 class="game-over-titulo">Fim de Jogo!</h2>
+    <p class="game-over-sub" id="game-over-sub"></p>
+
+    <div class="game-over-stats">
+      <div class="game-over-stat">
+        <span class="game-over-num" id="go-pontos">0</span>
+        <span class="game-over-label">Pontos</span>
+      </div>
+      <div class="game-over-stat">
+        <span class="game-over-num" id="go-acertos">0</span>
+        <span class="game-over-label">Acertos</span>
+      </div>
+      <div class="game-over-stat">
+        <span class="game-over-num" id="go-sequencia">0</span>
+        <span class="game-over-label">Maior sequência</span>
+      </div>
+    </div>
+
+    <div class="game-over-btns">
+      <button id="btn-jogar-novamente">🔄 Jogar Novamente</button>
+      <button id="btn-trocar-modo">🎮 Trocar Modo</button>
+    </div>
+
+  </div>
+</div>
+
+<div id="game-conquistas" class="game-overlay oculto">
+  <div class="conquistas-inner">
+    <button class="fechar-overlay" id="fechar-conquistas">
+      <i data-lucide="x"></i>
+    </button>
+    <div class="conquistas-header">
+      <div class="conquistas-logo">🏅</div>
+      <h2 class="conquistas-titulo">Minhas Conquistas</h2>
+      <p class="conquistas-sub" id="conquistas-sub">0 de 36 desbloqueadas</p>
+    </div>
+
+    <div class="conquistas-secoes" id="conquistas-secoes"></div>
+  </div>
+</div>
+
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
