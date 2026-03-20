@@ -945,3 +945,16 @@ header p {
   .conquistas-inner { border-radius: 16px; padding: 20px 14px; }
   #btn-conquistas span { display: none; }
 }
+
+@media (max-width: 600px) {
+  /* já existia */
+  .conquista-grid { grid-template-columns: repeat(2, 1fr); }
+  .conquistas-inner { border-radius: 16px; padding: 20px 14px; }
+  #btn-conquistas span { display: none; }
+
+  /* ADICIONA ISSO */
+  header { padding: 10px 14px; }
+  .logo { font-size: 1.1rem; }
+  #btn-jogar { padding: 7px 12px; font-size: 0.8rem; }
+  #btn-conquistas { padding: 7px 10px; }
+}
